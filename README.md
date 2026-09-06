@@ -23,7 +23,7 @@ A modern, high-performance, SaaS-inspired Mini Kanban Board application built wi
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Frontend (`/client`)
 - **Framework**: Next.js 16 (App Router), React 19
@@ -40,7 +40,7 @@ A modern, high-performance, SaaS-inspired Mini Kanban Board application built wi
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 mini-kanban-board/
@@ -76,7 +76,7 @@ mini-kanban-board/
 
 ---
 
-## 🧮 Task Ordering Mechanism
+##  Task Ordering Mechanism
 
 ### Fractional Position Indexing
 Tasks are ordered using a floating-point `position` property. When a task is inserted between Task A (position $P_A$) and Task B (position $P_B$), the new position is computed as:
@@ -100,7 +100,7 @@ moveQueueRef.current = moveQueueRef.current
 
 ---
 
-## 🔑 API Overview
+##  API Overview
 
 ### Authentication (`/api/auth`)
 - `POST /api/auth/register` — Register a new account
@@ -135,7 +135,7 @@ moveQueueRef.current = moveQueueRef.current
 
 ---
 
-## ⚡ Quickstart & Local Development
+##  Quickstart & Local Development
 
 ### Prerequisites
 - Node.js 20+
@@ -177,7 +177,7 @@ Open `http://localhost:3000` in your browser.
 
 ---
 
-## 🐳 Docker Deployment
+##  Docker Deployment
 
 To launch the full stack (PostgreSQL, Backend API, Next.js Frontend) using Docker:
 
