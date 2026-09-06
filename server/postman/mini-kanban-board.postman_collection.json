@@ -1,0 +1,460 @@
+{
+  "info": {
+    "_postman_id": "d0c31e5d-5a9f-4fc8-9b5a-8f6c9f8a4d2e",
+    "name": "Mini Kanban Board API",
+    "description": "Complete API test collection for the Mini Kanban Board backend. Set userEmail and userPassword before running Register/Login, then run requests in dependency order.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000/api" },
+    { "key": "accessToken", "value": "" },
+    { "key": "userEmail", "value": "kanban@example.com" },
+    { "key": "userPassword", "value": "Password123!" },
+    { "key": "userName", "value": "Kanban User" },
+    { "key": "userId", "value": "" },
+    { "key": "boardId", "value": "" },
+    { "key": "columnId", "value": "" },
+    { "key": "secondColumnId", "value": "" },
+    { "key": "taskId", "value": "" },
+    { "key": "memberUserId", "value": "" }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.request.headers.upsert({ key: 'Accept', value: 'application/json' });"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data?.id) pm.collectionVariables.set('userId', json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{userName}}\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/auth/register"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data?.accessToken) pm.collectionVariables.set('accessToken', json.data.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Boards",
+      "item": [
+        {
+          "name": "Create Board",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) { const json = pm.response.json(); if (json.data?.id) pm.collectionVariables.set('boardId', json.data.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Product Launch\",\n  \"description\": \"Tasks for the product launch\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards"
+          }
+        },
+        {
+          "name": "List My Boards",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards"
+          }
+        },
+        {
+          "name": "Get Board",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}"
+          }
+        },
+        {
+          "name": "Get Board Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/summary"
+          }
+        },
+        {
+          "name": "List Board Members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/members"
+          }
+        },
+        {
+          "name": "Update Board",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Product Launch\",\n  \"description\": \"Updated board description\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}"
+          }
+        },
+        {
+          "name": "Add Board Member",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{memberUserId}}\",\n  \"role\": \"EDITOR\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/members"
+          }
+        },
+        {
+          "name": "Remove Board Member",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/members/{{memberUserId}}"
+          }
+        },
+        {
+          "name": "Delete Board",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Columns",
+      "item": [
+        {
+          "name": "List Columns",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/columns"
+          }
+        },
+        {
+          "name": "Create Column",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) { const json = pm.response.json(); if (json.data?.id) pm.collectionVariables.set('columnId', json.data.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"In Progress\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/columns"
+          }
+        },
+        {
+          "name": "Update Column",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Doing\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/columns/{{columnId}}"
+          }
+        },
+        {
+          "name": "Delete Column",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/columns/{{columnId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "Create Task",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) { const json = pm.response.json(); if (json.data?.id) pm.collectionVariables.set('taskId', json.data.id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Prepare release notes\",\n  \"description\": \"Write and review the release notes\",\n  \"priority\": \"HIGH\",\n  \"dueDate\": \"2026-09-30T00:00:00.000Z\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/columns/{{columnId}}/tasks"
+          }
+        },
+        {
+          "name": "List Tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/columns/{{columnId}}/tasks"
+          }
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Prepare final release notes\",\n  \"priority\": \"MEDIUM\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/columns/{{columnId}}/tasks/{{taskId}}"
+          }
+        },
+        {
+          "name": "Move Task",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetColumnId\": \"{{secondColumnId}}\",\n  \"position\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/tasks/{{taskId}}/move"
+          }
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{accessToken}}", "type": "string" }
+              ]
+            },
+            "url": "{{baseUrl}}/boards/{{boardId}}/tasks/{{taskId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
