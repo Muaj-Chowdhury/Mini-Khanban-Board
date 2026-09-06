@@ -28,7 +28,12 @@ app.use("/api/auth", authRoutes);
 app.use("/api/boards", boardRoutes);
 app.use("/api/boards", columnRoutes);
 app.use("/api/boards", taskRoutes);
-
+app.get("/", (_request, response) => {
+  response.json({
+    success: true,
+    message: "Welcome to the Mini Kanban Board API",
+  });
+});
 app.use(notFound);
 app.use(globalErrorHandler);
 
