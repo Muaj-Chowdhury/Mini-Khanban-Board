@@ -4,7 +4,7 @@ A modern, high-performance, SaaS-inspired Mini Kanban Board application built wi
 
 ---
 
-## 🚀 Features
+##  Features
 
 - **Authentication & JWT**: User registration, login, JWT token management, and auto-session restoration via `/api/auth/me`.
 - **Board Management**: Workspace dashboard, create, edit, view, and delete project boards with confirmation modals.
