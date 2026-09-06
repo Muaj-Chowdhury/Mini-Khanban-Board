@@ -31,10 +31,9 @@ export const auth = () => {
     async (req: Request, _res: Response, next: NextFunction) => {
       const authorization = req.headers.authorization;
       const token =
-        req.cookies.accessToken ??
         (authorization?.startsWith("Bearer ")
           ? authorization.slice("Bearer ".length)
-          : authorization);
+          : authorization) ?? req.cookies.accessToken;
 
       if (!token) {
         throw new AppError("Unauthorized", 401);
