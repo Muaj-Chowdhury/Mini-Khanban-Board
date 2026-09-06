@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import { AuthService } from "./auth.service";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
+import { AuthService } from "./auth.service.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
 import httpStatus from "http-status";
 
 const authService = new AuthService();

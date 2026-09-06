@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
-import { prisma } from "../../lib/prisma";
-import { ILoginUser, RegisterUserPayload } from "./auth.interface";
+import { prisma } from "../../lib/prisma.js";
+import { ILoginUser, RegisterUserPayload } from "./auth.interface.js";
 import { JwtPayload, SignOptions } from "jsonwebtoken";
-import config from "../../config";
-import { generateToken } from "../../utils/jwt";
-import { AppError } from "../../errors/AppError";
+import config from "../../config/index.js";
+import { generateToken } from "../../utils/jwt.js";
+import { AppError } from "../../errors/AppError.js";
 export class AuthService {
   async register(payload: RegisterUserPayload) {
     // Business logic for user registration

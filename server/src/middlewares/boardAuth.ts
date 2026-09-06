@@ -14,10 +14,10 @@
  */
 
 import { NextFunction, Request, Response } from "express";
-import { MemberRole } from "../../generated/prisma/enums";
-import { catchAsync } from "../utils/catchAsync";
-import { prisma } from "../lib/prisma";
-import { AppError } from "../errors/AppError";
+import { MemberRole } from "../../generated/prisma/enums.js";
+import { catchAsync } from "../utils/catchAsync.js";
+import { prisma } from "../lib/prisma.js";
+import { AppError } from "../errors/AppError.js";
 
 declare global {
   namespace Express {
@@ -36,9 +36,7 @@ export const boardAuth = (...requiredRoles: MemberRole[]) => {
   return catchAsync(
     async (req: Request, _res: Response, next: NextFunction) => {
       const boardId =
-        typeof req.params.boardId === "string"
-          ? req.params.boardId
-          : undefined;
+        typeof req.params.boardId === "string" ? req.params.boardId : undefined;
       const userId = req.user?.id;
 
       if (!userId) {
@@ -82,7 +80,10 @@ export const boardAuth = (...requiredRoles: MemberRole[]) => {
       }
 
       // ── Role check ────────────────────────────────────────
-      if (requiredRoles.length > 0 && !requiredRoles.includes(membership.role)) {
+      if (
+        requiredRoles.length > 0 &&
+        !requiredRoles.includes(membership.role)
+      ) {
         throw new AppError(
           `Insufficient permissions. Required role(s): ${requiredRoles.join(", ")}`,
           403,

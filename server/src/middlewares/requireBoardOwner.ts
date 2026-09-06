@@ -12,17 +12,15 @@
  */
 
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../utils/catchAsync";
-import { prisma } from "../lib/prisma";
-import { AppError } from "../errors/AppError";
+import { catchAsync } from "../utils/catchAsync.js";
+import { prisma } from "../lib/prisma.js";
+import { AppError } from "../errors/AppError.js";
 
 export const requireBoardOwner = () => {
   return catchAsync(
     async (req: Request, _res: Response, next: NextFunction) => {
       const boardId =
-        typeof req.params.boardId === "string"
-          ? req.params.boardId
-          : undefined;
+        typeof req.params.boardId === "string" ? req.params.boardId : undefined;
       const userId = req.user?.id;
 
       if (!userId) {
@@ -42,10 +40,7 @@ export const requireBoardOwner = () => {
       }
 
       if (board.ownerId !== userId) {
-        throw new AppError(
-          "Only the board owner can perform this action",
-          403,
-        );
+        throw new AppError("Only the board owner can perform this action", 403);
       }
 
       next();

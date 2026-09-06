@@ -1,4 +1,4 @@
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.js";
 import { AppError } from "../../errors/AppError.js";
 import type { ShareBoardPayload } from "./board.interface.js";
 import type {
