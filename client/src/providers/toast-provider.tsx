@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 type ToastKind = "success" | "error";
 
@@ -50,7 +50,7 @@ export function ToastProvider({
           <ToastMessage
             key={toast.id}
             toast={toast}
-            onDismiss={() => dismissToast(toast.id)}
+            onDismiss={dismissToast}
           />
         ))}
       </div>
@@ -63,12 +63,14 @@ function ToastMessage({
   onDismiss,
 }: {
   toast: Toast;
-  onDismiss: () => void;
+  onDismiss: (id: number) => void;
 }) {
+  const dismiss = useCallback(() => onDismiss(toast.id), [onDismiss, toast.id]);
+
   useEffect(() => {
-    const timeoutId = window.setTimeout(onDismiss, 3500);
+    const timeoutId = window.setTimeout(dismiss, 3500);
     return () => window.clearTimeout(timeoutId);
-  }, [onDismiss]);
+  }, [dismiss]);
 
   return (
     <div
@@ -82,7 +84,7 @@ function ToastMessage({
       <span>{toast.message}</span>
       <button
         type="button"
-        onClick={onDismiss}
+        onClick={dismiss}
         aria-label="Dismiss notification"
         className="text-gray-400 hover:text-gray-700"
       >

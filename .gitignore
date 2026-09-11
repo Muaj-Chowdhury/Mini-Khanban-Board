@@ -1,0 +1,32 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+build/
+.next/
+out/
+
+# prisma generated client
+generated/
+
+# env files (.env.example templates are committed)
+.env
+.env.local
+.env*.local
+
+# logs
+*.log
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# local tooling / agent state
+.commandcode/
+
+# editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

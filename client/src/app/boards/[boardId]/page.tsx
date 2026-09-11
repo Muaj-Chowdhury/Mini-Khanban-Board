@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useRef, useState } from "react";
+import { use, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   closestCorners,
@@ -12,6 +12,7 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { ArrowLeft, Edit, Plus, Trash2, Users, X } from "lucide-react";
 import { getBoardDetails, getBoardSummary } from "@/services/board.service";
 import { Column } from "@/components/kanban/column";
@@ -33,6 +34,8 @@ interface BoardPageProps {
     boardId: string;
   }>;
 }
+
+const EMPTY_TASKS: Task[] = [];
 
 export default function BoardPage({ params }: BoardPageProps) {
   const { boardId } = use(params);
@@ -69,8 +72,11 @@ export default function BoardPage({ params }: BoardPageProps) {
         queryKey: ["board-details", boardId],
       });
     },
-    onError: () => {
-      showToast("Failed to create column", "error");
+    onError: (error) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      showToast(message || "Failed to create column", "error");
     },
   });
 
@@ -188,9 +194,12 @@ export default function BoardPage({ params }: BoardPageProps) {
     queryFn: () => getBoardSummary(boardId),
   });
 
-  const columnIds = data?.columns.map((column) => column.id) ?? [];
+  const columnIds = useMemo(
+    () => data?.columns.map((column) => column.id) ?? [],
+    [data?.columns],
+  );
   const {
-    data: boardTasks = [],
+    data: boardTasks = EMPTY_TASKS,
     isLoading: isTasksLoading,
     isError: isTasksError,
     isFetched: isTasksFetched,

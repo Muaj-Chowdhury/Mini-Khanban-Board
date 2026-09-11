@@ -20,6 +20,8 @@ export interface BoardPermissionContext {
 
 export function useBoardPermissions(context?: BoardPermissionContext) {
   const { user } = useAuth();
+  const ownerId = context?.ownerId;
+  const members = context?.members;
 
   return useMemo(() => {
     if (!user) {
@@ -37,11 +39,11 @@ export function useBoardPermissions(context?: BoardPermissionContext) {
       };
     }
 
-    const isOwner = Boolean(context?.ownerId && user.id === context.ownerId);
+    const isOwner = Boolean(ownerId && user.id === ownerId);
 
     let memberRole: "VIEWER" | "EDITOR" | null = null;
-    if (context?.members) {
-      const currentMember = context.members.find((m) => m.user.id === user.id);
+    if (members) {
+      const currentMember = members.find((m) => m.user.id === user.id);
       if (currentMember) {
         memberRole = currentMember.role;
       }
@@ -74,5 +76,7 @@ export function useBoardPermissions(context?: BoardPermissionContext) {
       canManageTasks,
       canMoveTasks,
     };
-  }, [user, context?.ownerId, context?.members]);
+  // members array: compare by identity only — callers must stabilize it (e.g. from useQuery data)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, ownerId, members]);
 }
